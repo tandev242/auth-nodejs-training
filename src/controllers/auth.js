@@ -108,10 +108,12 @@ exports.forgotPassword = async (req, res) => {
 
 
 exports.resetPassword = async (req, res) => {
-    const { email, password, otpCode } = req.body;
+    const { password, otpCode } = req.body;
+    // _id returned by jwt authentication
+    const { _id } = req.user;
     try {
-        // check email exists 
-        const user = await User.findOne({ email }).exec();
+        // get user info by _id
+        const user = await User.findOne({ _id }).exec();
         if (user) {
             // check Otp code exists 
             const otpObj = await Otp.findOne({ user: user._id, otpCode }).exec();

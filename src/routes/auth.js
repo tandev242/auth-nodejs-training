@@ -11,9 +11,9 @@ const router = express.Router();
 
 router.post('/signup', validateSignupRequest, isValidatedRequest, signup);
 router.post('/signin', validateSigninRequest, isValidatedRequest, signin);
-router.post('/getUserInfo', requireSignin, validateSigninRequest, isValidatedRequest, getUserInfo);
+router.get('/getUserInfo', requireSignin, validateSigninRequest, isValidatedRequest, getUserInfo);
 router.post('/forgotPassword', validateForgotPasswordRequest, isValidatedRequest, forgotPassword);
-router.post('/resetPassword', validateResetPasswordRequest, isValidatedRequest, resetPassword);
+router.post('/resetPassword', requireSignin, validateResetPasswordRequest, isValidatedRequest, resetPassword);
 
 
 module.exports = router;

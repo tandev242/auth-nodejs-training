@@ -35,10 +35,6 @@ exports.validateForgotPasswordRequest = [
 ];
 
 exports.validateResetPasswordRequest = [
-    check('email')
-        .isEmail()
-        .withMessage('Valid Email is required'),
-
     check('password')
         .isLength({ min: 6 })
         .withMessage('Password must be at least 6 character long')
