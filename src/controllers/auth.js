@@ -31,6 +31,7 @@ exports.signup = async (req, res) => {
         if (createdUser) {
             const token = generateJwtToken(createdUser._id, createdUser.email);
             const { _id, email } = createdUser;
+            // response token and user info
             res.status(201).json({ token, user: { _id, email } });
         } else {
             res.status(400).json({ error: "Something went wrong" });
@@ -46,7 +47,7 @@ exports.signin = async (req, res) => {
         // get user info by email 
         const existingUser = await User.findOne({ email }).exec();
         if (existingUser) {
-            // hashing password and checking it matchs with password in db
+            // hash password and check it match with password in db
             const isMatchPassword = await existingUser.authenticate(password);
             if (isMatchPassword) {
                 const token = generateJwtToken(existingUser._id, existingUser.email);
@@ -112,7 +113,7 @@ exports.resetPassword = async (req, res) => {
         // check email exists 
         const user = await User.findOne({ email }).exec();
         if (user) {
-            // check Otp code is exists 
+            // check Otp code exists 
             const otpObj = await Otp.findOne({ user: user._id, otpCode }).exec();
             if (otpObj) {
                 // hashing password before updating to database
