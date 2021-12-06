@@ -99,7 +99,7 @@ exports.forgotPassword = async (req, res) => {
                 res.status(400).json({ error: "Something went wrong" });
             }
         } else {
-            res.status(400).json({ error: "Email is not exists" });
+            res.status(400).json({ error: "Email does not exists" });
         }
     } catch (error) {
         res.status(400).json({ error });
@@ -126,7 +126,7 @@ exports.resetPassword = async (req, res) => {
                 res.status(400).json({ error: "Otp code is invalid" });
             }
         } else {
-            res.status(400).json({ error: "Email is not exists" });
+            res.status(400).json({ error: "Email does not exists" });
         }
     } catch (error) {
         res.status(400).json({ error });

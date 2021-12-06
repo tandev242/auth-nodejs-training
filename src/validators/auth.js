@@ -48,9 +48,9 @@ exports.validateResetPasswordRequest = [
         }),
     check('otpCode')
         .isLength(6)
-        .withMessage('Otp code is number with 6 digits')
+        .withMessage('Otp code must be a 6 digit number')
         .isDecimal()
-        .withMessage('Otp code is number with 6 digits')
+        .withMessage('Otp code must be a 6 digit number')
 ];
 
 
