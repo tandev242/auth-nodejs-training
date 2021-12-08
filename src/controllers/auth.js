@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { User, Otp } = require("../models");
+const { sendOtpCodeToMail } = require("../services/mailer");
 
 //Generate token by _id, email with expiration time is 10 day
 const generateJwtToken = (_id, email) => {
@@ -18,7 +19,7 @@ exports.signup = async (req, res) => {
     const { email, password } = req.body;
     try {
         // check email exists 
-        const existingUser = await User.findOne({ email }).exec();
+        const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ error: "Email already exists" });
         }
@@ -45,7 +46,7 @@ exports.signin = async (req, res) => {
     const { email, password } = req.body;
     try {
         // get user info by email 
-        const existingUser = await User.findOne({ email }).exec();
+        const existingUser = await User.findOne({ email });
         if (existingUser) {
             // hash password and check it match with password in db
             const isMatchPassword = await existingUser.authenticate(password);
@@ -54,7 +55,7 @@ exports.signin = async (req, res) => {
                 const { _id, email } = existingUser;
                 res.status(200).json({ token, user: { _id, email } });
             } else {
-                return res.status(400).json({ message: "Password is incorrect" });
+                return res.status(400).json({ error: "Password is incorrect" });
             }
         } else {
             res.status(400).json({ error: "Email is incorrect" });
@@ -64,29 +65,11 @@ exports.signin = async (req, res) => {
     }
 };
 
-
-exports.getUserInfo = async (req, res) => {
-    const { _id } = req.user;
-    try {
-        // get user info by _id but ignore password
-        const user = await User.findOne({ _id })
-            .select('-password').exec();
-        if (user) {
-            res.status(200).json({ user });
-        } else {
-            res.status(400).json({ error: "Something went wrong" });
-        }
-    } catch (error) {
-        res.status(400).json({ error });
-    }
-}
-
-
 exports.forgotPassword = async (req, res) => {
     const { email } = req.body;
     try {
         // check email exists 
-        const user = await User.findOne({ email }).exec();
+        const user = await User.findOne({ email });
         if (user) {
             //generate Otp code 
             const otpCode = generateOtp();
@@ -94,6 +77,8 @@ exports.forgotPassword = async (req, res) => {
             const otpObj = new Otp({ user: user._id, otpCode });
             const createdOtp = await otpObj.save();
             if (createdOtp) {
+                // Send Otp to email
+                await sendOtpCodeToMail(otpCode, email);
                 res.status(200).json({ otpCode });
             } else {
                 res.status(400).json({ error: "Something went wrong" });
@@ -108,17 +93,16 @@ exports.forgotPassword = async (req, res) => {
 
 
 exports.resetPassword = async (req, res) => {
-    const { password, otpCode } = req.body;
-    // _id returned by jwt authentication
-    const { _id } = req.user;
+    const { email, password, otpCode } = req.body;
+
     try {
-        // get user info by _id
-        const user = await User.findOne({ _id }).exec();
+        // get user info by email
+        const user = await User.findOne({ email });
         if (user) {
             // check Otp code exists 
-            const otpObj = await Otp.findOne({ user: user._id, otpCode }).exec();
+            const otpObj = await Otp.findOne({ user: user._id, otpCode });
             if (otpObj) {
-                // hashing password before updating to database
+                // hash password before updating to database
                 const hashedPassword = await bcrypt.hash(password, 10);
                 await User.updateOne({ _id: user._id }, { password: hashedPassword });
                 res.status(200).json({ message: "Password is updated successfully" });

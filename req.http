@@ -1,0 +1,45 @@
+POST http://localhost:3000/api/auth/signup
+Content-Type: application/json
+
+{
+    "email": "tan240600@gmail.com",
+    "password": "daylapassword",
+    "confirmPassword": "daylapassword"
+}
+
+###################################################
+POST  http://localhost:3000/api/auth/signin
+Content-Type: application/json
+
+{
+    "email": "tannv26@gmail.com",
+    "password": "daylapasswordmoi"
+}
+
+###################################################
+POST  http://localhost:3000/api/auth/forgotPassword
+Content-Type: application/json
+
+{
+    "email": "tannv26@gmail.com"
+}
+
+###################################################
+POST  http://localhost:3000/api/auth/resetPassword
+Content-Type: application/json
+
+{
+    "email": "tannv26@gmail.com",
+    "password": "daylapasswordmoi",
+    "confirmPassword": "daylapasswordmoi",
+    "otpCode": "283737"   
+}
+
+
+###################################################
+GET  http://localhost:3000/api/user/getUserInfo
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWFlZDI2YzQ0NDk1ZDU4MzM4OGUwYzIiLCJlbWFpbCI6InRhbm52MjZAZ21haWwuY29tIiwiaWF0IjoxNjM4ODQ3NzE1LCJleHAiOjE2Mzk3MTE3MTV9.Xg95b7KAl5C_XHmr88NfE6BXjUJHaJ0R8kauZyP0bYM
+
+{
+}
